@@ -1,0 +1,7 @@
+# Python tooling (used only to generate docs/diagrams, not app code)
+docs/.venv/
+__pycache__/
+*.pyc
+
+# OS
+.DS_Store
