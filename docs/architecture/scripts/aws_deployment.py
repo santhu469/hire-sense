@@ -54,12 +54,12 @@ with Diagram(
 
         queue = SQS("Evaluation\nJob Queue")
         bucket = S3("S3\n(resume files +\nstatic assets)")
-        secrets = SecretsManager("Secrets Manager\n(DB creds,\nAnthropic API key)")
+        secrets = SecretsManager("Secrets Manager\n(DB creds,\nOpenAI API key)")
         logs = Cloudwatch("CloudWatch\n(logs & metrics)")
         registry = ECR("ECR\n(container images)")
 
     ses = Blank("Amazon SES\n(email delivery)")
-    anthropic = Blank("Anthropic\nClaude API\n[external]")
+    openai = Blank("OpenAI API\n[external]")
 
     users >> dns >> alb
     alb >> Edge(label="/*") >> fe_svc
@@ -71,7 +71,7 @@ with Diagram(
     api_svc >> Edge(label="send approved email") >> ses
 
     queue >> worker_svc
-    worker_svc >> Edge(label="score candidate") >> anthropic
+    worker_svc >> Edge(label="score candidate") >> openai
     worker_svc >> rds
     worker_svc >> bucket
 

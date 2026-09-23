@@ -58,7 +58,7 @@ with Diagram(
         db = PostgreSQL("PostgreSQL\n(JDs, candidates,\nscores, decisions,\nusers, audit log)")
         storage = S3("Object Storage\n(resume files)")
 
-    llm = Blank("Claude API\n(Anthropic)\n[external]")
+    llm = Blank("OpenAI API\n[external]")
     email = Blank("Email Provider\n(SES)\n[external]")
 
     user >> frontend >> gateway
