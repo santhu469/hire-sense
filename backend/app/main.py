@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import get_settings
@@ -13,9 +13,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth.router)
-app.include_router(job_descriptions.router)
-app.include_router(candidates.router)
+# Nested under /api so the frontend and backend can share one ALB origin in
+# production (path-based routing: /api/* -> backend, everything else ->
+# frontend) with no CORS needed and no collision with frontend page routes
+# of the same name (e.g. /job-descriptions/[jdId]). /health stays
+# unprefixed since it's hit directly by the ALB target group health check,
+# not through the public listener's path rules.
+api_router = APIRouter(prefix="/api")
+api_router.include_router(auth.router)
+api_router.include_router(job_descriptions.router)
+api_router.include_router(candidates.router)
+app.include_router(api_router)
 
 
 @app.get("/health")

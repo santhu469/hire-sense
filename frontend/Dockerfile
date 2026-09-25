@@ -3,6 +3,11 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci
 COPY . .
+# Next.js inlines NEXT_PUBLIC_* vars at build time, not runtime. Default of
+# /api works as-is in production since frontend and backend share one ALB
+# origin with path-based routing; override at build time for anything else.
+ARG NEXT_PUBLIC_API_BASE_URL=/api
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 RUN npm run build
 
 FROM node:20-slim
